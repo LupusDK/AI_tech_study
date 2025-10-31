@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>114年10月第三次資訊處AI讀書會紀錄</title>
+    <style>
+        /* 基礎設置 */
+        :root {
+            --primary-color: #007bff; /* 港務公司/科技藍 */
+            --secondary-color: #6c757d; /* 灰色 */
+            --background-color: #f8f9fa; /* 淺灰背景 */
+            --text-color: #343a40; /* 深灰文字 */
+            --border-radius: 8px;
+            --padding-base: 20px;
+        }
+
+        body {
+            font-family: 'Noto Sans TC', 'Microsoft YaHei', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--padding-base);
+        }
+
+        /* 標題區 */
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 40px var(--padding-base);
+            text-align: center;
+            margin-bottom: var(--padding-base);
+            border-bottom-left-radius: var(--border-radius);
+            border-bottom-right-radius: var(--border-radius);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            letter-spacing: 2px;
+        }
+
+        header p {
+            margin-top: 10px;
+            font-size: 1.2em;
+        }
+
+        /* 視覺區塊 (照片與影片) */
+        #visual-blocks {
+            display: grid;
+            gap: var(--padding-base);
+            grid-template-columns: 2fr 1fr; /* 桌面版: 照片區較寬 */
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 992px) {
+            #visual-blocks {
+                grid-template-columns: 1fr; /* 平板/手機版: 堆疊 */
+            }
+        }
+
+        /* 照片區塊 (3x2 Grid) */
+        #photo-gallery {
+            background-color: white;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        #photo-gallery h2 {
+            color: var(--primary-color);
+            margin-top: 0;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); /* 3欄 */
+            gap: 10px;
+        }
+
+        .photo-grid img {
+            width: 100%;
+            height: 120px; /* 固定的高度 */
+            object-fit: cover; /* 保持比例裁切 */
+            display: block;
+            border-radius: 4px;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        .photo-grid a:hover img {
+            transform: scale(1.05);
+            opacity: 0.9;
+        }
+
+        @media (max-width: 576px) {
+            .photo-grid {
+                grid-template-columns: repeat(2, 1fr); /* 手機版: 2欄 */
+            }
+        }
+
+        /* 影片區塊 */
+        #video-embed {
+            background-color: white;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        #video-embed h2 {
+            color: var(--primary-color);
+            margin-top: 0;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .video-wrapper {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* 16:9 比例 */
+            height: 0;
+        }
+
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 4px;
+        }
+
+        /* 會議內容區 */
+        .meeting-section {
+            background-color: white;
+            padding: var(--padding-base);
+            margin-bottom: var(--padding-base);
+            border-radius: var(--border-radius);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .meeting-section h2 {
+            color: var(--primary-color);
+            border-left: 5px solid var(--primary-color);
+            padding-left: 10px;
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        .summary h3 {
+            color: #28a745; /* 綠色 */
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            border-bottom: 1px dashed #eee;
+            padding-bottom: 5px;
+        }
+        
+        /* 心智圖與QA摺疊區 */
+        details {
+            margin-top: 15px;
+            border: 1px solid #dee2e6;
+            border-radius: var(--border-radius);
+            padding: 10px;
+            background-color: #f8f9fa;
+        }
+
+        summary {
+            font-weight: bold;
+            cursor: pointer;
+            outline: none;
+            color: var(--secondary-color);
+            padding: 5px 0;
+        }
+
+        summary::marker {
+            color: var(--primary-color);
+        }
+
+        /* ---------------------------------------------------- */
+        /* 新增：為嵌入式 Markmap iFrame 創建響應式容器 */
+        .mindmap-iframe-wrapper {
+            position: relative;
+            padding-bottom: 75%; /* 確保 Markmap 有足夠空間顯示，75% 約為 4:3 比例 */
+            height: 0;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .mindmap-iframe-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 1px solid #dee2e6; /* 邊框 */
+            border-radius: var(--border-radius);
+            background-color: white; /* 確保背景是白色或淺色 */
+        }
+        /* ---------------------------------------------------- */
+        
+        /* 原始心智圖文字樣式 (保留給未轉換為 Markmap 的章節) */
+        pre.mindmap-code {
+            background-color: #e9ecef;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-size: 0.9em;
+            line-height: 1.4;
+            color: #495057;
+        }
+        
+        /* QA表格 */
+        .qa-table table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .qa-table th, .qa-table td {
+            border: 1px solid #dee2e6;
+            padding: 10px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        .qa-table th {
+            background-color: #e9ecef;
+            font-weight: bold;
+            color: var(--text-color);
+            width: 20%;
+        }
+
+        /* 第五區塊特殊樣式 */
+        .final-discussion {
+            background-color: #fff3cd; /* 警告黃背景 */
+            border: 1px solid #ffeeba;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            margin-top: 15px;
+        }
+
+        .final-discussion h3 {
+            color: #856404;
+            margin-top: 0;
+        }
+        
+        .final-discussion ul {
+            padding-left: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>114年10月第三次資訊處AI讀書會紀錄</h1>
+            <p>會議日期：114年10月 / 資訊處主辦</p>
+        </header>
+
+        <!-- 視覺與多媒體區塊 -->
+        <section id="visual-blocks">
+            <!-- 區塊一：3x2 照片圖集 (點擊後放大) -->
+            <div id="photo-gallery">
+                <h2>📷 讀書會現場照片 (3x2)</h2>
+                <p>點擊圖片可放大檢視。</p>
+                <div class="photo-grid">
+                    <!-- 圖片路徑需替換為您的相對路徑 -->
+                    <a href="images/photo1.jpg" target="_blank"><img src="images/photo1.jpg" alt="讀書會照片1"></a>
+                    <a href="images/photo2.jpg" target="_blank"><img src="images/photo2.jpg" alt="讀書會照片2"></a>
+                    <a href="images/photo3.jpg" target="_blank"><img src="images/photo3.jpg" alt="讀書會照片3"></a>
+                    <a href="images/photo4.jpg" target="_blank"><img src="images/photo4.jpg" alt="讀書會照片4"></a>
+                    <a href="images/photo5.jpg" target="_blank"><img src="images/photo5.jpg" alt="讀書會照片5"></a>
+                    <a href="images/photo6.jpg" target="_blank"><img src="images/photo6.jpg" alt="讀書會照片6"></a>
+                </div>
+            </div>
+
+            <!-- 區塊二：YouTube 影片嵌入 -->
+            <div id="video-embed">
+                <h2>📺 讀書會短影片</h2>
+                <div class="video-wrapper">
+                    <!-- 嵌入式 YouTube 影片 (已移除多餘參數，使用純淨 embed 網址) -->
+                    <iframe width="560" height="315" src="https://www.youtube.com/embed/KfddrVgl81U?si=uVFw70y4GUSJlcCU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                </div>
+            </div>
+        </section>
+
+        <!-- 1. 港務公司現況、人力結構與AI重要性 -->
+        <article class="meeting-section">
+            <h2>1. 港務公司現況、人力結構與AI重要性</h2>
+            <div class="summary">
+                <h3>📌 主題：港務公司人力結構、營運現況與AI之價值定位</h3>
+                <p>目前港務公司總人數為2,067人，資訊處實務業務人員有35人。<strong>人力結構挑戰：</strong> 60歲以上人員佔比約20%（379人），可能對AI推動產生較大阻力。</p>
+                <p>公司業務持續增長，必須利用AI來協助處理日益增加的事務。<strong>AI的價值在於：</strong> 協助深入觀察海量數據，以及補足員工缺乏時間學習的困境。</p>
+                <p>公司已規劃M2.0升級（43個智慧方案，116-120年）及高層期望的M3.0推行。AI應用將涵蓋行政事務、資料庫應用與現場實務操作。<strong>核心思維：</strong> AI僅是輔助工具，**必須先具備「數位轉型」的思維和概念**，並與上位的M3.0策略相結合。</p>
+            </div>
+            
+            <!-- ⬇️⬇️⬇️ 此處已改為嵌入 Markmap 檔案 ⬇️⬇️⬇️ -->
+            <details class="mindmap">
+                <summary>📑 展開心智圖結構 (點擊展開互動圖)</summary>
+                <!-- iFrame 會載入您提供的 mindmap_sec1.html 檔案 -->
+                <div class="mindmap-iframe-wrapper">
+                    <iframe src="mindmap_sec1.html" 
+                            frameborder="0" 
+                            loading="lazy"
+                            title="AI讀書會第一章節心智圖">
+                    </iframe>
+                </div>
+            </details>
+            <!-- ⬆️⬆️⬆️ 此處已改為嵌入 Markmap 檔案 ⬆️⬆️⬆️ -->
+            
+            <details class="qa-section">
+                <summary>🗣️ 本章節台下觀眾QA彙整</summary>
+                <p>本章節的錄音檔中未包含台下觀眾的具體問答內容。</p>
+            </details>
+        </article>
+
+        <!-- 2. AI轉型策略：六大關鍵步驟 (保留原始文字心智圖，若要改互動圖請仿照上方製作 sec2.html) -->
+        <article class="meeting-section">
+            <h2>2. AI轉型策略：六大關鍵步驟 (張資深處長登訓分享)</h2>
+            <div class="summary">
+                <h3>📌 主題：AI轉型關鍵六步驟：從看見阻力到人機共榮</h3>
+                <p>AI轉型是持續學習之旅，目標是走向「有智慧、有溫度、有未來」的AI時代。六大步驟涵蓋了從思維、策略到文化實踐的完整路徑。</p>
+                <p><strong>核心步驟與要點：</strong></p>
+                <ul>
+                    <li>**思維轉變：** 從**歸納法思維**（追求穩定）轉向**演繹型思維**（探索未知）。應用AI前應先**找出問題根本並進行流程改造**。</li>
+                    <li>**人機共榮：** 善用 AI Agent（人的大腦）、領導心態（人的心臟）和 AI RPA（人的雙手）協作。</li>
+                    <li>**數據決策：** 透過 Power BI 和 AI 數據預測，使決策從「後見之明」邁向**「前見」**（預防）。</li>
+                    <li>**文化建立：** 建立**「用AI、懂AI、治AI」**的文化，並透過場域示範、人才培育、KPI設定和資安認證來實踐。</li>
+                </ul>
+                <p>成功的定義是**「你可以給別人未來、別人就會為你而來」**，AI是企業智慧進化的起點。</p>
+            </div>
+            
+            <!-- ⬇️⬇️⬇️ 此處已改為嵌入 Markmap 檔案 ⬇️⬇️⬇️ -->
+            <details class="mindmap">
+                <summary>📑 展開心智圖結構 (點擊展開互動圖)</summary>
+                <!-- iFrame 會載入您提供的 mindmap_sec1.html 檔案 -->
+                <div class="mindmap-iframe-wrapper">
+                    <iframe src="mindmap_sec2.html" 
+                            frameborder="0" 
+                            loading="lazy"
+                            title="AI讀書會第二章節心智圖">
+                    </iframe>
+                </div>
+            </details>
+            <!-- ⬆️⬆️⬆️ 此處已改為嵌入 Markmap 檔案 ⬆️⬆️⬆️ -->
+            
+            <details class="qa-section">
+                <summary>🗣️ 本章節台下觀眾QA彙整</summary>
+                <p>本章節的錄音檔中未包含台下觀眾的具體問答內容。</p>
+            </details>
+        </article>
+
+        <!-- 3. Gemini&NotebookLM擴展工具分享 -->
+        <article class="meeting-section">
+            <h2>3. Gemini&NotebookLM擴展工具分享 (李惠婷分享)</h2>
+            <div class="summary">
+                <h3>📌 主題：擴充工具實務應用：以PARTS原則優化提示詞</h3>
+                <p>本次分享由吳奇老師開發的兩款 Chrome 擴充功能，目的是讓不具備深層 AI 技能的同仁（「麻瓜」）也能直接應用 AI。</p>
+                <p><strong>核心工具與原則：</strong></p>
+                <ul>
+                    <li>**Gemini EDU Prompt Assistant：** 提供提示詞模板與優化。**Chat 優化模式**採用 **PARTS 原則** (Persona, Action, Result, Tone, Style) 來結構化提示詞，以提高品質。</li>
+                    <li>**NotebookLM 匯出工具：** 可將對話內容快速匯出為 Google Docs、Slides 或 Forms，利於將分析內容轉換為結構化投影片。</li>
+                </ul>
+                <p>實務案例展示了如何透過 PARTS 原則，設定「港務公司公關」或「活潑的FB小編」等角色，精準生成新聞稿或社群文案。</p>
+            </div>
+            
+            <!-- ⬇️⬇️⬇️ 此處已改為嵌入 Markmap 檔案 ⬇️⬇️⬇️ -->
+            <details class="mindmap">
+                <summary>📑 展開心智圖結構 (點擊展開互動圖)</summary>
+                <!-- iFrame 會載入您提供的 mindmap_sec1.html 檔案 -->
+                <div class="mindmap-iframe-wrapper">
+                    <iframe src="mindmap_sec3.html" 
+                            frameborder="0" 
+                            loading="lazy"
+                            title="AI讀書會第三章節心智圖">
+                    </iframe>
+                </div>
+            </details>
+            <!-- ⬆️⬆️⬆️ 此處已改為嵌入 Markmap 檔案 ⬆️⬆️⬆️ -->
+            
+            <details class="qa-section">
+                <summary>🗣️ 本章節台下觀眾QA彙整</summary>
+                <div class="qa-table">
+                    <table>
+                        <tr><th>提問者/發言者</th><th>提問內容/評論</th><th>回應/討論重點</th></tr>
+                        <tr><td>台下觀眾 (隱含)</td><td>如何處理大量文件，避免不斷重複貼上提示詞？</td><td>可利用擴充工具儲存提示詞，或使用專門的 LLM 平台（如 ChatGPT Plus），讓系統記住提示詞。建議個人考慮購買 Gemini Pro 版本。</td></tr>
+                        <tr><td>李惠婷 (分享者)</td><td>從 PM 角度來看，是否需要很深入的 AI 技術基礎？</td><td>不需要很深的技術。透過運用這類小助手工具，能將 AI 功能直接應用在業務面上。</td></tr>
+                    </table>
+                </div>
+            </details>
+        </article>
+
+        <!-- 4. AI推廣吉祥物設計分享 -->
+        <article class="meeting-section">
+            <h2>4. AI推廣吉祥物設計分享 (陳宗揚分享)</h2>
+            <div class="summary">
+                <h3>📌 主題：AI推廣吉祥物：鯊魚與LM熊的設計理念</h3>
+                <p>本次分享旨在介紹用於內部網站「麻瓜魔法學苑」的 AI 推廣吉祥物設計過程與概念。</p>
+                <p><strong>兩大吉祥物理念：</strong></p>
+                <ul>
+                    <li>**鯊魚 (Shock)：** 代表 AI 底層的深度神經網絡 (DNN) 聯想到大海。鯊魚是海中霸主，名稱諧音「Share」，寓意資訊處同仁應具備**樂於分享**的精神。</li>
+                    <li>**LM 熊 (Leader Bear)：** 名稱取自大型語言模組 (LLM)，L 諧音「Leader」，象徵領導大家。</li>
+                </ul>
+                <p>**設計實務：** 使用圖像生成 AI (付費 J 門功能)，關鍵是先寫好詳細的**角色設定草稿**（專業、技能、樣貌）作為提示詞，以確保圖像在不同情境下的**一致性**。多媒體應用上，建議使用**英文**生成語音，以獲得較佳的品質。</p>
+            </div>
+            
+            <!-- ⬇️⬇️⬇️ 此處已改為嵌入 Markmap 檔案 ⬇️⬇️⬇️ -->
+            <details class="mindmap">
+                <summary>📑 展開心智圖結構 (點擊展開互動圖)</summary>
+                <!-- iFrame 會載入您提供的 mindmap_sec1.html 檔案 -->
+                <div class="mindmap-iframe-wrapper">
+                    <iframe src="mindmap_sec4.html" 
+                            frameborder="0" 
+                            loading="lazy"
+                            title="AI讀書會第四章節心智圖">
+                    </iframe>
+                </div>
+            </details>
+            <!-- ⬆️⬆️⬆️ 此處已改為嵌入 Markmap 檔案 ⬆️⬆️⬆️ -->
+            
+            <details class="qa-section">
+                <summary>🗣️ 本章節台下觀眾QA彙整</summary>
+                <div class="qa-table">
+                    <table>
+                        <tr><th>提問者/發言者</th><th>提問內容/評論</th><th>回應/討論重點</th></tr>
+                        <tr><td>李惠婷</td><td>吉祥物會使用在哪裡？是否有確認過版權/授權問題？</td><td>主要用於**內部教材**，不會對外行銷。版權和商標問題會請教法務單位。</td></tr>
+                    </table>
+                </div>
+            </details>
+        </article>
+
+        <!-- 5. AI推廣與未來學習討論 -->
+        <article class="meeting-section">
+            <h2>5. AI推廣與未來學習討論 (教育訓練組說明活動狀況與問卷調查)</h2>
+            <div class="final-discussion">
+                <p>教育訓練組說明了當前的 AI 推廣活動與未來學習需求調查，鼓勵同仁將 AI 推廣與「現實」業務痛點結合。</p>
+                
+                <h3>🌟 活動與行動呼籲：</h3>
+                <ul>
+                    <li><strong>AI 推廣吉祥物設計：</strong> 鼓勵 PM 及副 PM 自創專屬 AI 角色定位（可能以鯊魚為基底），用於教學。</li>
+                    <li><strong>AI 應用工作坊徵求主題：</strong> 感謝長官爭取資源，已獲得國際大廠支援。目前還有三場工作坊主題未定，<strong>徵求同仁主動提供想學習的技術性或業務性主題（例如 OCR、PSAI）</strong>。</li>
+                </ul>
+
+                <h3>📋 問卷調查與學習方向：</h3>
+                <p>問卷目的在於收集同仁對未來 AI 學習方向的意見，並了解推動 AI 過程中的**痛點**。學習方向應著重於如何解決實際的業務痛點，例如：</p>
+                <ul>
+                    <li>如何利用 AI 解決企業運用中的問題。</li>
+                    <li>如何自動化處理 Windows、AD、Unix 或 Pom 系統中的任務。</li>
+                    <li>如何利用不同系統 API 相互結合的功能。</li>
+                </ul>
+                <p><strong>總結：</strong> 鼓勵同仁利用像 NotebookLM 這種免費且功能強大的工具，將 AI 專注於解決公司的業務病痛，以獲得更好的推動成效。</p>
+            </div>
+        </article>
+
+        <footer>
+            <p style="text-align: center; color: var(--secondary-color); margin-top: 40px; border-top: 1px solid #dee2e6; padding-top: 10px;">
+                © 114年10月 第三次資訊處AI讀書會紀錄 - 版權所有-臺灣港務股份有限公司
+            </p>
+        </footer>
+    </div>
+</body>
+</html>
