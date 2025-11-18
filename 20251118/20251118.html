@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DELL AI 算力基礎建設與 AI 訓練佈署分享會</title>
+  <style>
+    :root {
+      --primary: #0b69c7;
+      --primary-soft: #e1f0ff;
+      --primary-soft-2: #f3f7ff;
+      --accent: #22c55e;
+      --dark: #0f172a;
+      --bg: #eef2f7;
+      --card-bg: #ffffff;
+      --border-subtle: #e2e8f0;
+      --text-muted: #64748b;
+      --radius-lg: 16px;
+      --shadow-soft: 0 14px 30px rgba(15, 23, 42, 0.12);
+      --shadow-card: 0 10px 25px rgba(15, 23, 42, 0.08);
+      --transition-fast: 0.18s ease;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, "Microsoft JhengHei", sans-serif;
+      background: radial-gradient(circle at top left, #e0f2ff 0, #eef2f7 40%, #e2e8f0 100%);
+      color: #111827;
+      line-height: 1.7;
+    }
+
+    a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    /* Hero 區塊 -------------------------------------------------- */
+    .hero {
+      position: relative;
+      background: radial-gradient(circle at top right, rgba(59,130,246,0.4) 0, #020617 45%, #020617 100%);
+      color: #f9fafb;
+      padding: 56px 20px 40px;
+      overflow: hidden;
+    }
+
+    .hero::before,
+    .hero::after {
+      content: "";
+      position: absolute;
+      border-radius: 999px;
+      filter: blur(42px);
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    .hero::before {
+      width: 260px;
+      height: 260px;
+      background: radial-gradient(circle, rgba(56,189,248,0.9), transparent);
+      top: -60px;
+      left: -40px;
+    }
+
+    .hero::after {
+      width: 320px;
+      height: 320px;
+      background: radial-gradient(circle, rgba(129,140,248,0.9), transparent);
+      bottom: -100px;
+      right: -40px;
+    }
+
+    .hero-inner {
+      position: relative;
+      max-width: 1120px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1.2fr);
+      gap: 32px;
+      align-items: center;
+      z-index: 1;
+    }
+
+    .hero-title {
+      font-size: 2.15rem;
+      font-weight: 750;
+      letter-spacing: 0.03em;
+      margin-bottom: 12px;
+    }
+
+    .hero-subtitle {
+      font-size: 1.02rem;
+      opacity: 0.95;
+      margin-bottom: 18px;
+      color: #e5e7eb;
+    }
+
+    .hero-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .tag {
+      font-size: 0.78rem;
+      padding: 4px 11px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, rgba(15,23,42,0.4), rgba(148,163,184,0.2));
+      border: 1px solid rgba(148,163,184,0.7);
+      backdrop-filter: blur(8px);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      color: #e5e7eb;
+    }
+
+    .tag::before {
+      content: "";
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(96,165,250,0.9);
+    }
+
+    .hero-highlight-box {
+      background: radial-gradient(circle at top left, rgba(37,99,235,0.85), rgba(15,23,42,0.96));
+      border-radius: 14px;
+      padding: 14px 16px;
+      font-size: 0.92rem;
+      border: 1px solid rgba(148,163,184,0.7);
+      box-shadow: 0 18px 45px rgba(15,23,42,0.7);
+    }
+
+    .hero-highlight-box strong {
+      color: #fde68a;
+    }
+
+    .hero-meta {
+      font-size: 0.82rem;
+      margin-top: 10px;
+      color: rgba(226,232,240,0.85);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .hero-meta::before {
+      content: "●";
+      font-size: 0.5rem;
+      color: #22c55e;
+    }
+
+    .hero-banner {
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      background: radial-gradient(circle at top left, #0b2940, #020617);
+      border: 1px solid rgba(148,163,184,0.7);
+      min-height: 210px;
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      text-align: left;
+      padding: 0;
+      position: relative;
+      color: #dbeafe;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .hero-banner::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: url("images/main.png"); /* TODO: 換成你的 Banner 圖片路徑 */
+      background-size: cover;
+      background-position: center;
+      opacity: 0.35;
+      mix-blend-mode: screen;
+    }
+
+    .hero-banner-content {
+      position: relative;
+      z-index: 1;
+      padding: 18px 20px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .hero-banner-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      align-self: flex-start;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      background: rgba(15,23,42,0.8);
+      border: 1px solid rgba(148,163,184,0.8);
+      color: #e5e7eb;
+    }
+
+    .hero-banner-pill-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: #22c55e;
+    }
+
+    .hero-banner h2 {
+      margin: 2px 0 4px;
+      font-size: 1.22rem;
+      font-weight: 650;
+    }
+
+    .hero-banner p {
+      margin: 0;
+      font-size: 0.9rem;
+    }
+
+    .hero-banner-meta {
+      font-size: 0.78rem;
+      opacity: 0.8;
+      margin-top: auto;
+    }
+
+    /* 主要內容容器 -------------------------------------------------- */
+    .page-shell {
+      max-width: 1120px;
+      margin: -12px auto 32px;
+      padding: 0 16px 40px;
+    }
+
+    .container {
+      background: rgba(255,255,255,0.98);
+      border-radius: 22px;
+      padding: 26px 20px 32px;
+      box-shadow: var(--shadow-card);
+      border: 1px solid rgba(226,232,240,0.9);
+    }
+
+    section {
+      margin-bottom: 36px;
+    }
+
+    .section-title {
+      font-size: 1.35rem;
+      font-weight: 650;
+      color: var(--dark);
+      margin-bottom: 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-title::before {
+      content: "";
+      width: 4px;
+      height: 18px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, #38bdf8, #6366f1);
+      display: inline-block;
+    }
+
+    .section-subtitle {
+      font-size: 0.93rem;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    /* 小標籤 for 區塊 */
+    .section-kicker {
+      font-size: 0.78rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #9ca3af;
+      margin-bottom: 4px;
+    }
+
+    /* 短摘要區 -------------------------------------------------- */
+    .summary-box {
+      background: linear-gradient(135deg, var(--primary-soft), var(--primary-soft-2));
+      border-radius: 14px;
+      padding: 14px 16px 14px;
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.07);
+      border: 1px solid rgba(148,163,184,0.55);
+      font-size: 0.95rem;
+    }
+
+    .summary-box ul {
+      margin: 8px 0 0;
+      padding-left: 20px;
+    }
+
+    .summary-box li {
+      margin-bottom: 4px;
+    }
+
+    /* 完整文字紀錄：Accordion ------------------------------------ */
+    .fulltext-wrapper {
+      background: transparent;
+      padding: 0;
+      box-shadow: none;
+      border: none;
+    }
+
+    .accordion {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .accordion-item {
+      border-radius: 14px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-subtle);
+      box-shadow: 0 6px 20px rgba(15, 23, 42, 0.06);
+      overflow: hidden;
+      transition: box-shadow var(--transition-fast), transform var(--transition-fast), border-color var(--transition-fast), background-color var(--transition-fast);
+    }
+
+    .accordion-item[open] {
+      box-shadow: 0 14px 30px rgba(15, 23, 42, 0.13);
+      transform: translateY(-1px);
+      border-color: rgba(59,130,246,0.6);
+      background: linear-gradient(180deg, #f9fafb, #ffffff);
+    }
+
+    .accordion-item summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 10px 14px;
+      font-size: 0.98rem;
+      font-weight: 600;
+      color: var(--dark);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: linear-gradient(90deg, #f8fafc, #edf2ff);
+      position: relative;
+    }
+
+    .accordion-item summary::after {
+      content: "";
+      position: absolute;
+      inset-inline: 12px;
+      bottom: 0;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(148,163,184,0.35), rgba(148,163,184,0));
+      opacity: 0;
+      transition: opacity var(--transition-fast);
+    }
+
+    .accordion-item[open] summary::after {
+      opacity: 1;
+    }
+
+    .accordion-item summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .accordion-item summary:hover {
+      background: linear-gradient(90deg, #f4f7ff, #e0edff);
+    }
+
+    .accordion-title-text {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .accordion-title-text span:last-child {
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+
+    .accordion-badge {
+      font-size: 0.78rem;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #1d4ed8;
+      color: #fff;
+      box-shadow: 0 0 0 1px rgba(191,219,254,0.9);
+    }
+
+    .accordion-arrow {
+      font-size: 0.9rem;
+      color: #64748b;
+      transition: transform 0.15s ease;
+      flex-shrink: 0;
+    }
+
+    .accordion-item[open] .accordion-arrow {
+      transform: rotate(90deg);
+    }
+
+    .accordion-body {
+      padding: 10px 14px 14px;
+      border-top: 1px solid var(--border-subtle);
+      background: #ffffff;
+      animation: accordionFade 0.18s ease-out;
+    }
+
+    @keyframes accordionFade {
+      from {
+        opacity: 0;
+        transform: translateY(-4px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .fulltext {
+      font-family: "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+      font-size: 0.9rem;
+      white-space: pre-wrap;
+      line-height: 1.7;
+      margin: 0;
+      color: #111827;
+    }
+
+    /* Multimedia 區（照片+影片並排） ------------------------------ */
+    .media-section {
+      margin-top: 40px;
+    }
+
+    .media-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.55fr) minmax(0, 1.1fr);
+      gap: 20px;
+      align-items: flex-start;
+    }
+
+    .media-col {
+      background: #f9fafb;
+      border-radius: 16px;
+      padding: 14px 14px 16px;
+      border: 1px solid var(--border-subtle);
+      box-shadow: 0 6px 18px rgba(15,23,42,0.06);
+    }
+
+    .media-col h3 {
+      margin: 0 0 6px;
+      font-size: 1.05rem;
+      font-weight: 620;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--dark);
+    }
+
+    .media-col h3::before {
+      content: "";
+      width: 3px;
+      height: 16px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, #38bdf8, #6366f1);
+      display: inline-block;
+    }
+
+    .media-col p {
+      margin: 0 0 10px;
+      font-size: 0.88rem;
+      color: var(--text-muted);
+    }
+
+    /* 活動照片 3x2 -------------------------------------------------- */
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .gallery-item {
+      position: relative;
+      cursor: pointer;
+      border-radius: 12px;
+      overflow: hidden;
+      background: linear-gradient(135deg, #e2e8f0, #cbd5f5);
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.18);
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast), filter var(--transition-fast);
+    }
+
+    .gallery-item:hover {
+      transform: translateY(-2px) translateZ(0);
+      box-shadow: 0 10px 20px rgba(15, 23, 42, 0.24);
+      filter: brightness(1.03);
+    }
+
+    .gallery-item img {
+      display: block;
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+    }
+
+    .gallery-caption {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 4px 8px;
+      font-size: 0.8rem;
+      color: #f9fafb;
+      background: linear-gradient(to top, rgba(15,23,42,0.9), rgba(15,23,42,0));
+    }
+
+    .gallery-note {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+
+    /* YouTube 區塊（縮小高度） -------------------------------------- */
+    .video-wrapper {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 10px 10px 12px;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .video-title {
+      font-size: 0.98rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: var(--dark);
+    }
+
+    .video-desc {
+      font-size: 0.86rem;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .video-embed {
+      position: relative;
+      width: 100%;
+      padding-bottom: 56.25%; /* 16:9 */
+      border-radius: 10px;
+      overflow: hidden;
+      background: #020617;
+    }
+
+    .video-embed iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+    /* Glossary -------------------------------------------------- */
+    .glossary-intro {
+      font-family: "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+      font-size: 0.88rem;
+      margin: 0 0 8px;
+      color: #111827;
+    }
+
+    .glossary-table-wrapper {
+      width: 100%;
+      overflow-x: auto;
+      border-radius: 10px;
+      border: 1px solid var(--border-subtle);
+      background: #f9fafb;
+    }
+
+    .glossary-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.86rem;
+      min-width: 480px;
+    }
+
+    .glossary-table thead {
+      background: linear-gradient(135deg, #e5edff, #dde7ff);
+    }
+
+    .glossary-table th,
+    .glossary-table td {
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--border-subtle);
+      vertical-align: top;
+    }
+
+    .glossary-table th {
+      text-align: left;
+      font-weight: 600;
+      color: #0f172a;
+      white-space: nowrap;
+    }
+
+    .glossary-table tbody tr:nth-child(even) {
+      background: #f3f4f6;
+    }
+
+    .glossary-table tbody tr:hover {
+      background: #e5edff;
+    }
+
+    .glossary-term {
+      font-weight: 600;
+      color: #111827;
+    }
+
+    .glossary-source {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    /* 圖片放大 Lightbox -------------------------------------------------- */
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      background: rgba(15,23,42,0.85);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      padding: 12px;
+    }
+
+    .lightbox.open {
+      display: flex;
+    }
+
+    .lightbox-content {
+      max-width: 96vw;
+      max-height: 90vh;
+      position: relative;
+    }
+
+    .lightbox-img {
+      max-width: 100%;
+      max-height: 90vh;
+      border-radius: 12px;
+      box-shadow: 0 18px 45px rgba(0,0,0,0.85);
+      display: block;
+    }
+
+    .lightbox-caption {
+      margin-top: 8px;
+      font-size: 0.9rem;
+      color: #e5e7eb;
+      text-align: center;
+    }
+
+    .lightbox-close {
+      position: absolute;
+      top: -12px;
+      right: -12px;
+      background: rgba(15,23,42,0.96);
+      color: #e5e7eb;
+      border-radius: 999px;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      cursor: pointer;
+      border: 1px solid rgba(148,163,184,0.9);
+    }
+
+    /* Footer -------------------------------------------------- */
+    footer {
+      text-align: center;
+      font-size: 0.8rem;
+      color: #7c8898;
+      padding: 14px 16px 18px;
+      border-top: 1px solid #e2e8f0;
+      background: #f8fafc;
+    }
+
+    /* RWD -------------------------------------------------- */
+    @media (max-width: 900px) {
+      .hero-inner {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .hero {
+        padding-top: 40px;
+      }
+
+      .hero-title {
+        font-size: 1.7rem;
+      }
+
+      .page-shell {
+        margin-top: -6px;
+      }
+
+      .container {
+        padding: 20px 14px 26px;
+        border-radius: 18px;
+      }
+
+      .media-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .hero {
+        padding-inline: 14px;
+      }
+
+      .page-shell {
+        padding-inline: 12px;
+      }
+
+      .section-title {
+        font-size: 1.18rem;
+      }
+
+      .hero-banner {
+        min-height: 190px;
+      }
+
+      .glossary-table {
+        min-width: 420px;
+      }
+
+      .gallery-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- 頂部 Hero 區 -->
+  <header class="hero">
+    <div class="hero-inner">
+      <div>
+        <div class="hero-title">DELL AI 算力基礎建設與 AI 訓練佈署分享會</div>
+        <div class="hero-subtitle">
+          這是一場聚焦「AI 導入策略 × 算力架構 × 企業 LLM 佈署」的實務分享，
+          從專案五大階段、硬體設計、平台建構到 RAG / 微調策略完整剖析 Dell AI Factory 2.0。
+        </div>
+
+        <div class="hero-tags">
+          <span class="tag">AI 導入與治理</span>
+          <span class="tag">GPU / 網路 / 儲存</span>
+          <span class="tag">LLM · RAG · Fine-tuning</span>
+          <span class="tag">Dell AI Factory 2.0</span>
+        </div>
+
+        <div class="hero-highlight-box">
+          <strong>頁面導覽說明：</strong><br>
+          上方為活動簡介與摘要，下方依序是
+          <strong>「完整逐字內容」</strong>（可展開各章節），再往下可以看到
+          <strong>「活動照片花絮」與「會議錄影回顧」</strong>，方便同仁查找與回顧。
+        </div>
+
+        <div class="hero-meta">
+          本頁為分享會重點與逐字紀錄整合，供內部學習與技術交流使用。
+        </div>
+      </div>
+
+      <div class="hero-banner">
+        <div class="hero-banner-content">
+          <div class="hero-banner-pill">
+            <span class="hero-banner-pill-dot"></span>
+            <span>AI Infrastructure Deep Dive</span>
+          </div>
+          <h2>DELL AI 基礎建設全貌</h2>
+          <p>算・網・存・管 一體化設計，支撐企業生成式 AI 與 LLM 應用落地。</p>
+
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="page-shell">
+    <main class="container">
+      <!-- 簡短摘要區 -->
+      <section id="short-summary">
+        <div class="section-kicker">OVERVIEW</div>
+        <h2 class="section-title">本場分享快速摘要</h2>
+        <div class="summary-box">
+          這場 DELL 分享會從實務角度說明：
+          <ul>
+            <li>為何 AI 導入常陷入「模型選不對、成本控不住、成效拉不起來」的負面循環。</li>
+            <li>如何以「業務情境」反推模型類型、算力規格與 GPU / 網路 / 儲存架構。</li>
+            <li>Dell AI Factory 2.0 在平台建構、RAG 與 LLM 微調上的參考做法與硬體選型。</li>
+          </ul>
+          <p style="margin-top:8px;">
+            底下「完整文字紀錄」區塊即為本次會議內容，依你提供之文字原樣呈現，方便重新搜尋關鍵段落。
+          </p>
+        </div>
+      </section>
+
+      <!-- 完整文字紀錄：依章節分段呈現 -->
+      <section id="fulltext">
+        <div class="section-kicker">TRANSCRIPT</div>
+        <h2 class="section-title">完整文字紀錄（原文）</h2>
+        <p class="section-subtitle">
+          下方內容為本次分享會的詳細紀錄，依七個章節分段呈現。每一章內文均為你提供之文字，
+          以 <code>&lt;pre&gt;</code> 或表格方式「一字未改」原樣顯示，方便精準搜尋關鍵段落。
+        </p>
+
+        <div class="fulltext-wrapper">
+          <div class="accordion">
+
+            <!-- 1. AI 導入的挑戰與策略定義 -->
+            <details class="accordion-item" open>
+              <summary>
+                <span class="accordion-title-text">
+                  <span class="accordion-badge">1</span>
+                  <span>AI 導入的挑戰與策略定義</span>
+                </span>
+                <span class="accordion-arrow">▶</span>
+              </summary>
+              <div class="accordion-body">
+                <pre class="fulltext">
+<strong>摘要</strong>
+企業導入 AI 面臨模型選擇過多、情境定義不足、準確率難以持續提升及算力成本過高的負面循環挑戰。應採取的策略是先定義業務目標和使用情境，再規劃所需資源，並確保資料新鮮度與結果的持續調整。專案導入涵蓋情境定義、資料準備、模型訓練、平台建構和治理維運五個階段。Dell 建議客戶透過其諮詢服務，從任務 (Task) 藍圖開始，逐步達成正式導入 (Advanced) 的目標。
+
+<strong>內容記錄</strong>
+企業導入 AI 經常會遇到負面循環：模型太多、不確定哪種模型適用於特定情境。即使定義了情境，但準確率仍是重要考量。準確率與算力配置有關，但清晰配置後卻面臨成本太高或雲端限制（安全性、合規性）的問題。許多人會因為費用問題而從雲端轉到地端，但這需要時間來重新部署和適應。
+
+Dell 的經驗建議，最開始必須先有定義好的目標，才能知道需要投入什麼資源。這就像老闆請了一位叫 AI 的人，必須清楚告訴他要做什麼。
+
+企業級部署考量要素 (Project Stage/Role/Responsibility/Skill)：
+
+使用情境定義 (Business Need): 由 Domain Expert/業務使用者定義輸入/輸出與業務需求，需要領域知識、Use Case 設計和問題框架。
+資料準備 (Data Preparation): 由 Data Owner/AP 應用開發者整理輸入來源、建構資料管線 (pipeline)，並從資料中提取洞察。需要 SQL/NoSQL、API 整合、資料清理與特徵工程等技能。
+模型訓練與驗證 (Model Training): 由資料科學家/Model Trainer 設計與訓練模型、驗證準確率和效能。需要機器學習、深度學習、Python/R、模型選擇與評估等技能。
+平台建構 (Platform Build): 由軟體工程師/平台架構師 (MLOps, Data Engineer) 建構訓練與部署平台，支援大規模模型運行與整合。需要 Docker/K8s、MLOps pipeline、API 設計和 DevOps 技能。
+治理與維運 (Governance &amp; Ops): 由資訊安全部門、CI/CD 維運團隊和基礎架構 IT 負責資安審核、自動化版本控管、GPU/CPU 資源分配、系統監控與異常排查。
+AI 突破藍圖 (AI Breakthrough Blueprint) 遵循從 Task (情境定義、需求盤點) 到 Basic (部署規劃、MVP 驗證) 再到 Standard 和 Advanced (正式導入與全面部署) 的階段性路徑。
+
+<strong>Q&amp;A</strong>
+問： 為何以前的 AI 不需要 GPU？
+答： 以前的 AI（如簡單的辨識、圖像識別、語音識別）只需要做識別動作，不需要做生成。生成型 AI 涉及創作，會嘗試錯誤，因此需要大量的算力。
+問： 雲端上做 AI 有什麼常見的問題？
+答： 最大的問題是結構會歪（像玩接龍，前面亂接後面就會歪），以及費用無法預估，很多人一開始不知道怎麼辦。</pre>
+              </div>
+            </details>
+
+            <!-- 2. AI 模型類型、規模與應用場景 -->
+            <details class="accordion-item">
+              <summary>
+                <span class="accordion-title-text">
+                  <span class="accordion-badge">2</span>
+                  <span>AI 模型類型、規模與應用場景</span>
+                </span>
+                <span class="accordion-arrow">▶</span>
+              </summary>
+              <div class="accordion-body">
+                <pre class="fulltext">
+<strong>摘要</strong>
+AI 模型類型可依規模和功能分為三類：解釋型 AI (7B+ 參數，用於簡單識別判斷)、預測型 AI (30B+ 參數，用於商業分析與決策支援)，以及生成型 AI (70B+ 參數，用於複雜創作，被視為最聰明)。模型的選擇必須與使用情境（如金融業的客服問答、製造業的良率預測）匹配，避免用小模型做生成型任務或用大模型做簡單識別，導致資源浪費和產出錯誤。
+
+<strong>內容記錄</strong>
+AI 模型類型、規模與用途差異：
+
+類型	參數規模	應用場景	特點
+解釋型 AI (Explanatory AI)	7B+ (e.g., 7B plus)	圖形識別、物件識別、語音識別。通常用於預測型 AI 的簡單判斷。	只做識別動作，不需大量算力，部署較容易，適合邊緣運算或地端。
+預測型 AI (Predictive AI)	30B+	商業分析、決策支援、報表解讀、資安分析。	比解釋型複雜，需要更多算力。
+生成型 AI (Generative AI)	70B+	創作、寫作、複雜推理、產生錯誤並從中學習。	最聰明，需要大參數和大算力。
+參數 (Parameter) 是指模型的大小，通常參數越大，模型能力越強，以「B」（Billion，十億）為單位。Token 是文本最小單位，影響模型對資訊的理解和處理，最大上下文長度決定模型能同時考慮的序列長度。
+
+模型參數大小的影響：
+
+模型大小影響其處理資訊的能力。例如，一個 32B 的模型來處理需要 120B 資訊量的任務時，它可能只會處理上半部，下半部會被遺漏。
+在客戶服務場景中，120B 模型能提供更詳細、更具連貫性的退貨流程說明，而 70B 或 34B 模型的回答則較為簡短，缺乏步驟性指引。
+應用場景舉例：
+
+金融業 AI 應用藍圖：
+純文字/圖片生成類： 逐字稿、程式碼生成、FAQ、個人化文案、報告生成。
+分類/分析： 異常交易分析、負面新聞判斷、輿情分析、客服文本分析、程式碼除錯。
+翻譯： 報告書翻譯、合約翻譯、即時會議翻譯。
+萃取知識搜尋： 內部知識庫、行內 Chatbot、行內法規搜尋引擎。
+製造業 AI 應用藍圖：
+製程優化： 製程參數最佳化、生產排程優化、製程數據穩定性監測。
+供應鏈與倉儲： 庫存預測、供應風險分析、原料價格波動風險預測。
+設備維運品質檢測： 影像瑕疵辨識、良率預測、預防性維護、設備故障預測。
+資源優化： 能源使用優化與碳排分析。
+<strong>Q&amp;A</strong>
+問： 如果我拿小型 PC 上的 GPU 想做生成型 AI，會有什麼問題？
+答： 這會導致錯誤的結果。如果你做了錯誤的選擇，你可能會花大錢在做一些簡單的任務上，或者做出來的結果不符合預期。</pre>
+              </div>
+            </details>
+
+            <!-- 3. AI 基礎設施 (硬體) 關鍵要求 -->
+            <details class="accordion-item">
+              <summary>
+                <span class="accordion-title-text">
+                  <span class="accordion-badge">3</span>
+                  <span>AI 基礎設施 (硬體) 關鍵要求</span>
+                </span>
+                <span class="accordion-arrow">▶</span>
+              </summary>
+              <div class="accordion-body">
+                <pre class="fulltext">
+<strong>摘要</strong>
+AI 基礎設施的設計必須圍繞 算、網、存、管 四大要素。在算力方面，大型模型訓練需採用支援 NVLink/SXM 等高速互連技術的 GPU 伺服器，以突破 PCIe 介面的 40GB/s 頻寬限制。網路方面，GPU 間的通訊必須達到 400G 的高速頻寬，以確保資料（如同火箭燃料）能及時、不間斷地輸送到 GPU。儲存方面，需要高性能、低延遲的儲存系統（如 PowerScale），特別是為了應對訓練過程中的 Checkpoint (檢查點) 寫入需求，防止進度丟失。
+
+<strong>內容記錄</strong>
+AI 基礎設施的四大關鍵設計要素：算力 (Compute)、網路 (Network)、儲存 (Storage)、管理 (Management)。
+
+算力 (Compute):
+
+需要高性能 GPU 運算伺服器（如 Dell PowerEdge XE9680、R760xa）用於大模型預訓練與微調。
+需要高性能 CPU 伺服器（如 R660、R760）用於集群管理、登錄和資料治理。
+GPU 之間的溝通是關鍵。傳統上，GPU 透過主機板上的 PCIe 介面連接，速度極限約 40GB/s。
+為解決此瓶頸，大型訓練集群必須採用 NVLink Bridge 或 SXM 模組，這些技術能直接連接 GPU，提供數倍於 PCIe 的速度，對於需要頻繁溝通的 GPU 訓練 (如超過 4 張卡) 至關重要。
+網路 (Network):
+
+網路速度是 AI 運算的「油料補給線」。
+GPU 與 GPU 之間的溝通需要 400G 的高速網路。
+架構上通常需要四個關鍵網路：儲存網路、帶內管理網路、帶外管理網路和上行業務網路。
+Dell 支援 InfiniBand 和 AI Optimized Ethernet (如 Spectrum Ethernet, Broadcom Ethernet) 作為後端連接的選擇。
+Rail-Optimized (軌道優化) 設計（NCCL 優化拓撲）通常比 Top of Rack 設計能提供更高的 AI 效能和更低的 GPU 間延遲。
+儲存 (Storage):
+
+需要儲存訓練資料集、原始素材檔、模型檔和訓練過程中的中繼資料。數據量範圍從 TB 級到 PB 級。
+Checkpoint (檢查點) 保護是儲存的特殊要求。在大型訓練中，由於訓練時間長，必須定期儲存進度（如每 2 小時），以避免丟失進度。
+一個 40B 參數的模型，每 2 小時需要寫入 521.5 GiB 的 Checkpoint 檔案。若要求 Checkpoint 寫入只佔訓練時間的 2%，則儲存寫入頻寬需達到 3.62 GiB/sec。
+儲存寫入速度受限於網路極限，例如 10Gb 網卡只能提供約 0.72 GiB/sec 的寫入速度，這會導致 GPU 等待寫入完成，從而降低 GPU 利用率。
+Dell PowerScale+ECS 儲存系統被推薦，因其支援 GPU Direct，提升中繼資料並行讀取速度，並允許海量資料無需搬遷原地啟動 AI 進程。
+針對 I/O 密集型工作負載（如 3D UNet），NVMe SSD 和 GPU 搭配 GRAID SupremeRAID 軟體定義 RAID，可突破傳統 RAID 卡的效能瓶頸，實現高達 100% PCIe Gen5 的潛在效能，並減少 CPU 負載。
+<strong>Q&amp;A</strong>
+問： 如果我的網路頻寬不夠快，會對訓練造成什麼影響？
+答： 如果你的儲存寫入速度（受限於網路頻寬，例如 10GB 網路的極限是 0.72 GiB/sec）無法在 Checkpoint 規劃時間內寫完，GPU 會處於等待狀態，從而降低 GPU 利用率，拖慢整個訓練進度。
+問： 為什麼 GPU 之間需要 400G 的網路？
+答： 這是因為資料是 AI 的燃料，需要及時往上輸送。傳統 PCIe 介面的速度有限。透過 NVLink/SXM 技術，可以將多張卡集合起來，極大地提升 GPU 間的通訊速度。</pre>
+              </div>
+            </details>
+
+            <!-- 4. AI 平台建構與軟體堆疊 -->
+            <details class="accordion-item">
+              <summary>
+                <span class="accordion-title-text">
+                  <span class="accordion-badge">4</span>
+                  <span>AI 平台建構與軟體堆疊</span>
+                </span>
+                <span class="accordion-arrow">▶</span>
+              </summary>
+              <div class="accordion-body">
+                <pre class="fulltext">
+<strong>摘要</strong>
+AI 平台是串接開發流程與資源的關鍵環節，許多人常忽略。平台建構的目標是提供一個統一、可調度的環境，通常是基於容器化技術（如 K8s/OpenShift AI）。軟體堆疊從底層的裸機/OS 開始，向上是統一版本的平台軟體。對於需要不同版本軟體的特殊需求，則必須導入虛擬化技術 (vGPU/TimeSliced) 來切分資源，儘管這會帶來約 10% 到 20% 的資源耗損。
+
+<strong>內容記錄</strong>
+平台的重要性與架構：
+
+平台建構 (Platform Build) 負責建構訓練與部署平台，並支援大規模模型運行與整合。
+Dell AI Factory 2.0 提供了一個參考架構。軟體堆疊由底層的裸機 (Bare Metal)、作業系統 (OS/Hypervisor) 開始。
+接著是統一的軟體堆疊 (Kubernetes/Container Platform, 如 OpenShift AI/VMware/AIstack)，所有元件的版本都需統一。
+平台通常是 C 型 (Orchestration/Scheduling)，提供 GPU 計算集群管理、資源調度和大模型分散式訓練功能。
+GPU 資源切割與調度：
+
+TimeSliced (分時): NVIDIA 提供的邏輯分區方法。可劃分 GPU 記憶體，但 GPU 內核是共用的（分時）。優點是可以增加每個 GPU 的 VM 密度，適用於不支援 MIG 的舊 GPU。
+MIG (Multi-instance GPU): NVIDIA 提供的硬體分區技術。一個物理 GPU 最多可切分 7 個分區（H100），GPU 核心和記憶體是完全隔離的。
+資源調度可透過實體機方式 (Kubernetes Namespaces, ResourceQuota) 劃分給不同團隊或專案。
+若加入 VMware Stack (vSphere)，則虛擬機成為工作節點，為每個團隊/專案提供單獨的 Kubernetes 集群，實現更安全的隔離。
+虛擬化與版本管理：
+
+當企業有特殊需求，例如開發環境的版本與系統版本必須不同時，就必須導入虛擬化技術。
+虛擬化 (如 vGPU) 允許在一個半導體中調度不同的版本，但會有一定程度的資源耗損，實驗數據約為 10% 到 20%。
+<strong>Q&amp;A</strong>
+問： 在什麼情境下，一定要導致軟體版本不一致？
+答： 當模型比較久遠，或者使用的開發套件 (SDK) 版本比較舊時。例如，新模型可能要求用新版本，舊模型要求用舊版本，就無法統一版本。
+問： 如果使用 vGPU 的 TimeSliced 切割方式，有哪些缺點？
+答： 缺點是它切分的數量會比較具體，且無法混用。另一個缺點是它的資源（如記憶體）會受限於其他人是否先做完。</pre>
+              </div>
+            </details>
+
+            <!-- 5. 企業 LLM 應用與 RAG/微調策略 -->
+            <details class="accordion-item">
+              <summary>
+                <span class="accordion-title-text">
+                  <span class="accordion-badge">5</span>
+                  <span>企業 LLM 應用與 RAG/微調策略</span>
+                </span>
+                <span class="accordion-arrow">▶</span>
+              </summary>
+              <div class="accordion-body">
+                <pre class="fulltext">
+<strong>摘要</strong>
+企業導入 LLM 應從最簡單的提示工程 (Prompt Engineering) 開始，其次是模型增強 (RAG)，然後再考慮模型微調 (Fine-tuning)。RAG (檢索增強生成) 策略通過結合內部知識庫和向量資料庫，能即時提供最新、最相關的資料來回答問題，提升準確率，而無需重新訓練整個大模型。Dell Agentic RAG 更進一步，透過多步驟推理和 LLM 監督的品質管理，實現自我反思與糾正。微調 (Fine-tuning) 則涉及改變模型權重，需要更多資源，但能將準確率從 RAG 的 83.9% 提升至 90.2%。
+
+<strong>內容記錄</strong>
+LLM 應用四種部署模式（前三種是 90% 組織正在實施的）：
+
+簡單推理 (Simple Inference): 提示工程 (Prompt Engineering)，向預訓練模型提問並接收結果。
+模型增強 (RAG): 檢索增強生成 (Retrieval-Augmented Generation)，通過存取組織內部資料來增強模型智慧化程度，是很好的起點。
+微調模型 (Fine-tuning): 涉及更改模型權重，使用組織資料完善模型，能提供更好的結果，但需更多努力。
+模型訓練 (Model Training): 構建非常具體的模型並從頭訓練，通常保留用於解決更複雜的問題。
+RAG 策略 (Retrieval-Augmented Generation):
+
+RAG 的原理是利用外部知識庫來回答問題，避免模型使用過期資料。
+RAG 透過將檔案切片 (chunking) 並放入向量資料庫 (Vector DB)。
+Dell Agentic RAG 是一種進階 RAG 模式，具備多步驟推理、智能化的輸出品質管理、反思與自我糾正能力。它在每一步驟都調用 LLM 來監督 AI，包括 Query Router (路由式查詢)、Relevance Check (關聯性檢查)、Hallucination Check (幻覺檢查) 和 Answer Check (答案檢查)。
+RAG 必須確保資料新鮮度。Dell PowerScale 透過 Metadata eXtraction (MDX) 功能，可以自動偵測資料變動（新增、修改、刪除），並通知 RAG 應用程式進行重新處理和更新向量資料庫。
+微調策略 (Fine-tuning):
+
+RAG 加上微調的模型，準確率可以從單純 RAG 的 83.9% 提升到 90.2%。
+微調的方法包括：自學 (PEFT)、老師教學生 (Distillation) 和從頭學 (Training from Scratch)。
+蒸餾 (Distillation) 是一種將大型模型（老師）的答案或思考方式教給另一個較小型模型（學生）的方法，能減少計算資源需求，同時最大限度地保留準確度和性能。
+在模型訓練中，如果想要將準確率提升到超過 80% 或 90% 以上，就必須往微調或訓練的方向走。
+數值精度 (FP) 的影響：
+
+生成型 AI 通常會將算態精度從傳統的 32 位元降到一半 (如 BF16) 來節省記憶體。
+精度越低 (如 FP8 或 FP4)，需要的記憶體越少，但幻覺率 (胡說八道) 會提昇。
+新的 GPU 系列（如 B 系列）是針對 FP4 和 FP8 處理優化的。
+<strong>Q&amp;A</strong>
+問： 如果我不想做 Fine-tuning，我能只用 RAG 來處理多個領域的資料 (如人事、採購) 嗎？
+答： 可以。RAG 相當於查字典。你可以用同一顆 LLM 來處理不同類型（如人事、採購）的資料，將這些資料丟進向量資料庫 (圖書管)。Dell 認為 GPT-OSS 在 20B 左右的模型已經非常好用，除非應用情境非常小且具體，否則不建議一開始就做 Fine-tuning。
+問： RAG 和 Fine-tuning 的臨界點在哪裡？
+答： 如果你的問題涉及主觀性 (preference) 或公司獨特的知識 (Domino)，且這個答案無法在公開或宏觀資料中找到，那麼你就需要透過 Fine-tuning 來將這些主觀性灌輸給模型。否則，RAG 加上 Agentic AI 策略（將大問題拆分成許多小問題讓專門的 Agent 處理）會是更有效率的解法。
+問： 如果我自建 LLM 平台，建得太大會不會造成資源浪費？
+答： 平台建構是一個長期過程（平均約一年半時間）。雖然前期導入 GPU 很重要，以確保使用者體驗的「毫無費力感」，但後續的邏輯設計是關鍵。建議將任務切小，使用多個小模型搭配 Agentic Engine/專家系統來處理不同的任務，而不是只維護一個超級大的模型。這可以讓你用比較靈活的資源去應對不同的應用。</pre>
+              </div>
+            </details>
+
+            <!-- 6. 硬體技術與供應商比較 -->
+            <details class="accordion-item">
+              <summary>
+                <span class="accordion-title-text">
+                  <span class="accordion-badge">6</span>
+                  <span>硬體技術與供應商比較</span>
+                </span>
+                <span class="accordion-arrow">▶</span>
+              </summary>
+              <div class="accordion-body">
+                <pre class="fulltext">
+<strong>摘要</strong>
+Dell AI Factory 2.0 提供了多種硬體選擇，涵蓋 NVIDIA (H100/H200)、AMD (MI300X) 和 Intel (Gaudi3) 的加速器。在 GPU 互連技術上，NVLink/SXM 是實現多卡高效能訓練的標準，而 PCIe 連接則會限制速度。Dell 的 PowerEdge XE9680 在 Llama2-70B 推論效能基準測試中表現優異。在網路架構方面，Dell 支援 InfiniBand 和 AI-Optimized Ethernet，並推薦採用 Rail-Optimized 拓撲以降低延遲。
+
+<strong>內容記錄</strong>
+GPU 與伺服器產品組合：
+
+Dell 提供多供應商選擇：NVIDIA (H100 NVL/SXM5, H200 SXM5, L40S, A10, A2)、AMD (MI300X, MI200) 和 Intel (Gaudi3) 加速器。
+DGX 為黃金標準伺服器，僅提供 8 張卡規格；HGX 可選擇 2 片 (PCIe)、4 片 (SXM) 或 8 片 (SXM)。
+Dell PowerEdge 系列產品：
+8-Way GPU: XE9680, XE9685L。
+4-Way GPU: XE8640, XE9640。
+PowerEdge XE7740 (新發布): 在風冷 4U 機箱中實現極高 PCIe GPU 密度，最多可容納 8 個 Gaudi3 或 8 個 H200 NVL 或 16 個 L4 PCIe GPU。
+GPU 互連技術 (NVLink):
+
+NVLink Bridge 技術用於連接多個 NVIDIA GPU，能擴展 GPU 記憶體和性能，滿足大規模運算工作負載。
+NVLink/SXM 提供了低延遲的無交換機設計，所有 GPU 彼此直接連接。這是大型訓練集群的標準配置。
+網路架構與效能：
+
+Dell 的 NCCL (NVIDIA Collective Communications Library) All Reduce 效能測試顯示，InfiniBand 和 AI Optimized Ethernet (如 Spectrum Ethernet) 都能達到最大可用頻寬 (約 96% bit rate)。
+Rail-Optimized End of Row Design (軌道優化) 採用 NCCL 優化的拓撲，能提供更高的 AI 效能和更低的 GPU 間延遲。
+儲存加速技術：
+
+Dell 聯手 Phison 和 GRAID 打造 AI Solution。
+傳統硬體 RAID 供應商在 PCIe Gen4 RAID 卡上通常只能提供約 25% 的 PCIe Gen5 潛在效能。
+GRAID SupremeRAID 通過利用 GPU 進行 RAID 計算，能實現 100% 的 PCIe Gen5 潛在效能（16 個 PCIe Gen5 x4 Drives 可達 224GB/s），同時大幅減少 CPU 資源消耗。
+<strong>Q&amp;A</strong>
+問： 如果 NVIDIA 和 AMD 的成本相近，兩者之間的好壞或搭配建議是什麼？
+答： 兩者的成本差異不大。AMD (MI300X) 的主要優勢是 RAM 可以大一點。但主要考量在於軟體開發生態系。目前許多軟體開發都是基於 NVIDIA 生態系 (CUDA)。如果要用 AMD，平台必須支援 NVIDIA 和 AMD (如 AMD 的 ROCm)，才能將軟體從 NVIDIA 轉移過去。
+問： DGX 和 HGX 的差異是什麼？
+答： DGX 是黃金標準伺服器，僅提供 8 張卡規格。HGX 則提供 2 片 (PCIe)、4 片 (SXM) 或 8 片 (SXM) 的規格選擇。
+	</pre>
+              </div>
+            </details>
+
+            <!-- 7. 關鍵知識 Glossary -->
+            <details class="accordion-item">
+              <summary>
+                <span class="accordion-title-text">
+                  <span class="accordion-badge">7</span>
+                  <span>關鍵知識 Glossary</span>
+                </span>
+                <span class="accordion-arrow">▶</span>
+              </summary>
+              <div class="accordion-body">
+                <p class="glossary-intro">
+關鍵術語整理如下，文字內容維持原樣，只將呈現方式改為表格便於閱讀與查找：
+                </p>
+                <div class="glossary-table-wrapper">
+                  <table class="glossary-table">
+                    <thead>
+                      <tr>
+                        <th>術語</th>
+                        <th>定義 / 解釋</th>
+                        <th>來源</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td class="glossary-term">生成型 AI (Generative AI)</td>
+                        <td>參數規模 70B 以上，用於創作、寫作等複雜任務，需要大量算力。</td>
+                        <td class="glossary-source"></td>
+                      </tr>
+                      <tr>
+                        <td class="glossary-term">解釋型 AI (Explanatory AI)</td>
+                        <td>參數規模 7B 左右，用於簡單的識別、判斷、語音識別，通常不需大量 GPU。</td>
+                        <td class="glossary-source"></td>
+                      </tr>
+                      <tr>
+                        <td class="glossary-term">預測型 AI (Predictive AI)</td>
+                        <td>參數規模 30B 左右，用於商業分析、預測和決策支援。</td>
+                        <td class="glossary-source"></td>
+                      </tr>
+                      <tr>
+                        <td class="glossary-term">RAG (Retrieval-Augmented Generation)</td>
+                        <td>檢索增強生成。通過結合外部知識庫（如向量資料庫）來即時提供新鮮資料，增強模型準確度，避免使用過時資料。</td>
+                        <td class="glossary-source"></td>
+                      </tr>
+                      <tr>
+                        <td class="glossary-term">Agentic RAG</td>
+                        <td>代理增強檢索生成。使用多個 LLM 代理進行多步驟推理、自我反思與糾正，並透過 LLM 監督輸出品質。</td>
+                        <td class="glossary-source"></td>
+                      </tr>
+                      <tr>
+                        <td class="glossary-term">Fine-tuning (微調)</td>
+                        <td>更改預訓練模型的權重，使用自有資料完善模型，提升準確率。</td>
+                        <td class="glossary-source"></td>
+                      </tr>
+                      <tr>
+                        <td class="glossary-term">Distillation (蒸餾)</td>
+                        <td>將大型模型（老師）的知識、答案或思考過程，轉移到小型模型（學生）上，以減少推論成本和計算資源需求。</td>
+                        <td class="glossary-source"></td>
+                      </tr>
+                      <tr>
+                        <td class="glossary-term">Checkpoint (檢查點)</td>
+                        <td>在長時間訓練過程中，定期（如每 2 小時）將訓練進度存檔，防止進度丟失。大型模型寫入 Checkpoint 需要極高的儲存寫入頻寬。</td>
+                        <td class="glossary-source"></td>
+                      </tr>
+                      <tr>
+                        <td class="glossary-term">NVLink/SXM</td>
+                        <td>NVIDIA 提供的 GPU 間高速互連技術，能突破傳統 PCIe 介面的頻寬限制，是大型訓練集群的關鍵要求。</td>
+                        <td class="glossary-source"></td>
+                      </tr>
+                      <tr>
+                        <td class="glossary-term">MIG (Multi-instance GPU)</td>
+                        <td>NVIDIA 提供的 GPU 硬體分區技術，可將一個物理 GPU 切割成多個完全隔離的分區，用於更安全的隔離和資源調度。</td>
+                        <td class="glossary-source"></td>
+                      </tr>
+                      <tr>
+                        <td class="glossary-term">TimeSliced</td>
+                        <td>NVIDIA 提供的 GPU 邏輯分區方法，GPU 內核為分時共用，可用於不支援 MIG 的舊 GPU。</td>
+                        <td class="glossary-source"></td>
+                      </tr>
+                      <tr>
+                        <td class="glossary-term">FP4/FP8/FP16 (數值精度)</td>
+                        <td>浮點數精度。FP 數值越低（如 FP4），模型所需記憶體越少，但幻覺率 (Hallucination) 越高。</td>
+                        <td class="glossary-source"></td>
+                      </tr>
+                      <tr>
+                        <td class="glossary-term">Token</td>
+                        <td>大模型處理資料的最小單位（如單詞或符號），用於理解與處理資訊的基礎。</td>
+                        <td class="glossary-source"></td>
+                      </tr>
+                      <tr>
+                        <td class="glossary-term">Parameter (參數)</td>
+                        <td>模型的大小，1B 代表 10 億參數。一般來說，參數越大，模型能力越強。</td>
+                        <td class="glossary-source"></td>
+                      </tr>
+                      <tr>
+                        <td class="glossary-term">GRAID SupremeRAID</td>
+                        <td>利用 GPU 進行 RAID 計算的軟體定義 RAID，能克服傳統硬體 RAID 的效能瓶頸，實現 PCIe Gen5 的潛在效能。</td>
+                        <td class="glossary-source"></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </details>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- 下方 Multimedia：活動照片花絮 + 會議錄影回顧 並排 -->
+      <section id="media" class="media-section">
+        <div class="section-kicker">MULTIMEDIA</div>
+        <h2 class="section-title">活動照片與錄影回顧</h2>
+        <div class="media-grid">
+          <!-- 活動照片花絮（3×2） -->
+          <div class="media-col" id="photos">
+            <h3>活動照片花絮</h3>
+            <p>精選六張現場照片，呈現講者分享、設備展示與與會者互動情況。（點擊可放大）</p>
+
+            <div class="gallery-grid">
+              <!-- TODO: 將 src / data-full 換成你的實際圖片路徑，data-caption 換成照片說明 -->
+              <div class="gallery-item" data-full="images/photo01.png">
+                <img src="images/photo01.png" alt="活動照片 1">
+                
+              </div>
+
+              <div class="gallery-item" data-full="images/photo02.png">
+                <img src="images/photo02.png" alt="活動照片 2">
+                
+              </div>
+
+              <div class="gallery-item" data-full="images/photo03.png">
+                <img src="images/photo03.png" alt="活動照片 3">
+                
+              </div>
+
+              <div class="gallery-item" data-full="images/photo04.jpg">
+                <img src="images/photo04.jpg" alt="活動照片 4">
+               
+              </div>
+
+              <div class="gallery-item" data-full="images/photo05.jpg">
+                <img src="images/photo05.jpg" alt="活動照片 5">
+                
+              </div>
+
+              <div class="gallery-item" data-full="images/photo06.jpg">
+                <img src="images/photo06.jpg" alt="活動照片 6">
+             
+              </div>
+            </div>
+
+            <p class="gallery-note">提示：點擊任一張照片可放大查看。</p>
+          </div>
+
+          <!-- 會議錄影回顧 -->
+          <div class="media-col" id="video">
+            <h3>會議錄影回顧</h3>
+
+            <div class="video-wrapper">
+              <div class="video-title">DELL AI 基礎建設與訓練佈署分享會 – 全程錄影</div>
+              <div class="video-desc">
+                影片內容涵蓋：<br>
+                ・AI 導入負面循環與破局策略<br>
+                ・算力、網路與儲存設計實務<br>
+                ・Dell AI Factory 平台與 RAG / Fine-tuning 案例說明
+              </div>
+              <div class="video-embed">
+                <!-- TODO: 將 YOUTUBE_VIDEO_ID 換成實際影片 ID -->
+                <iframe
+                  <iframe width="560" height="315" src="https://www.youtube.com/embed/PngydVCPO4w?si=2SM3pl4aWVrDsVEY" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                </iframe>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Lightbox 大圖 -->
+  <div class="lightbox" id="lightbox">
+    <div class="lightbox-content">
+      <span class="lightbox-close" id="lightboxClose">&times;</span>
+      <img class="lightbox-img" id="lightboxImg" src="" alt="活動照片放大">
+      <div class="lightbox-caption" id="lightboxCaption"></div>
+    </div>
+  </div>
+
+  <footer>
+    DELL AI 算力基礎建設與 AI 訓練佈署分享會 · 活動回顧頁面
+  </footer>
+
+  <script>
+    // 圖片放大 Lightbox Script
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightboxImg');
+    const lightboxCaption = document.getElementById('lightboxCaption');
+    const lightboxClose = document.getElementById('lightboxClose');
+
+    document.querySelectorAll('.gallery-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const full = item.getAttribute('data-full');
+        const caption = item.getAttribute('data-caption') || '';
+        lightboxImg.src = full;
+        lightboxCaption.textContent = caption;
+        lightbox.classList.add('open');
+      });
+    });
+
+    function closeLightbox() {
+      lightbox.classList.remove('open');
+      lightboxImg.src = '';
+      lightboxCaption.textContent = '';
+    }
+
+    lightboxClose.addEventListener('click', closeLightbox);
+    lightbox.addEventListener('click', (e) => {
+      if (e.target === lightbox) {
+        closeLightbox();
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && lightbox.classList.contains('open')) {
+        closeLightbox();
+      }
+    });
+  </script>
+</body>
+</html>
