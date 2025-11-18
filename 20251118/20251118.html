@@ -870,10 +870,37 @@ AI 模型類型可依規模和功能分為三類：解釋型 AI (7B+ 參數，�
 <strong>內容記錄</strong>
 AI 模型類型、規模與用途差異：
 
-類型	參數規模	應用場景	特點
-解釋型 AI (Explanatory AI)	7B+ (e.g., 7B plus)	圖形識別、物件識別、語音識別。通常用於預測型 AI 的簡單判斷。	只做識別動作，不需大量算力，部署較容易，適合邊緣運算或地端。
-預測型 AI (Predictive AI)	30B+	商業分析、決策支援、報表解讀、資安分析。	比解釋型複雜，需要更多算力。
-生成型 AI (Generative AI)	70B+	創作、寫作、複雜推理、產生錯誤並從中學習。	最聰明，需要大參數和大算力。
+				<table class="glossary-table">
+                    <thead>
+                      <tr>
+                        <th>類型</th>
+                        <th>參數規模</th>
+                        <th>應用場景</th>
+						<th>特點</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td class="glossary-term">解釋型 AI (Explanatory AI)</td>
+                        <td>7B+ </td>
+                        <td class="glossary-source">圖形識別、物件識別、語音識別。通常用於預測型 AI 的簡單判斷。</td>
+						<td>只做識別動作，不需大量算力，部署較容易，適合邊緣運算或地端。</td>
+                      </tr>
+                      <tr>
+                        <td class="glossary-term">預測型 AI (Predictive AI)</td>
+                        <td>30B+ </td>
+                        <td class="glossary-source">商業分析、決策支援、報表解讀、資安分析。</td>
+						<td>比解釋型複雜，需要更多算力。</td>
+                      </tr>
+					  <tr>
+                        <td class="glossary-term">生成型 AI (Generative AI)</td>
+                        <td>70B+ </td>
+                        <td class="glossary-source">創作、寫作、複雜推理、產生錯誤並從中學習。</td>
+						<td>最聰明，需要大參數和大算力。</td>
+                      </tr>
+                    </tbody>
+                  </table>
+
 參數 (Parameter) 是指模型的大小，通常參數越大，模型能力越強，以「B」（Billion，十億）為單位。Token 是文本最小單位，影響模型對資訊的理解和處理，最大上下文長度決定模型能同時考慮的序列長度。
 
 模型參數大小的影響：
@@ -1307,4 +1334,5 @@ GRAID SupremeRAID 通過利用 GPU 進行 RAID 計算，能實現 100% 的 PCIe 
   </script>
 </body>
 </html>
+
 
